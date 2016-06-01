@@ -3,8 +3,8 @@
 //--------------------------------------------------------------
 void testApp::setup(){
     
-    camWidth 		= 1280 ;	// try to grab at this size.
-    camHeight 		= 720;
+    camWidth 		= 1280/2 ;	// try to grab at this size.
+    camHeight 		= 720/2;
     
     //we can now get back a list of devices.
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
@@ -39,6 +39,9 @@ void testApp::setup(){
     
 //    camWidth =  img.getWidth();
 //    camHeight =  img.getHeight();
+
+    sketchWidth = ofGetWidth();
+    sketchHeight= ofGetHeight();
 }
 
 
@@ -46,32 +49,31 @@ void testApp::setup(){
 void testApp::update()
 {
     vidGrabber.update();
-    double tm = 0;//ofGetElapsedTimef();
+    double tm = ofGetElapsedTimef();
     
-    float w = ofGetWidth();
-    float h = ofGetHeight();
+
     
     if (vidGrabber.isFrameNew())
     {
         unsigned char * pixels = vidGrabber.getPixels();
 //        unsigned char * pixels = img.getPixels();
         float lineMaxAmp = 6.f;
-        double maxLineFreq =2.0;
+        float maxLineFreq =2.7;
         for(int i = 0; i < LINE_COUNT; i++)
         {
             float yNorm = i*1.f/(LINE_COUNT);
             int colorIndex = i % 3;
             int currentLineIndex = i;
-            double tVal = 0.f;
+            float tVal = 0.f;
             for(int j = 0; j < SEG_COUNT; j++)
             {
                 float xNorm = j*1.f/(SEG_COUNT);
                 
                 int camIndex = (int)((int)(yNorm*camHeight+1) *camWidth*3 - xNorm*camWidth*3);
-                double brightnessNorm = pixels[camIndex+colorIndex]/255.0;//(pixels[camIndex]+pixels[camIndex+1]+pixels[camIndex+2])/(255.f*3.f);
+                float brightnessNorm = pixels[camIndex+colorIndex]/255.0;//(pixels[camIndex]+pixels[camIndex+1]+pixels[camIndex+2])/(255.f*3.f);
                 tVal += pow((brightnessNorm*maxLineFreq),2);
-                mMesh[currentLineIndex].setVertex(j, ofVec2f(j*w/(SEG_COUNT-1.f),
-                                              i*h/(LINE_COUNT-1.f) +lineMaxAmp*sin(tm+tVal)));
+                mMesh[currentLineIndex].setVertex(j, ofVec2f(j*sketchWidth/(SEG_COUNT-1.f),
+                                                             i*sketchHeight/(LINE_COUNT-1.f) +lineMaxAmp*sin(tm+tVal)));
             }
         }
     }
@@ -83,15 +85,7 @@ void testApp::draw(){
     ofEnableSmoothing();
     ofGetCurrentRenderer()->setFillMode(OF_OUTLINE);
     ofGetCurrentRenderer()->setLineSmoothing(true);
-    float w = ofGetCurrentRenderer()->getViewportWidth();
-    float h = ofGetCurrentRenderer()->getViewportHeight();
-//    call glGet with arguments GL_ALIASED_LINE_WIDTH_RANGE, GL_SMOOTH_LINE_WIDTH_RANGE, and GL_SMOOTH_LINE_WIDTH_GRANULARITY.
-//    glGet( GL_ALIASED_LINE_WIDTH_RANGE);
-    float range[4];
-    glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE,range);
-    glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE,range);
-    glGetFloatv(GL_SMOOTH_LINE_WIDTH_GRANULARITY,range);
-    ofSetLineWidth(.3);
+
     //	vidGrabber.draw(0,0);
     //videoTexture.draw(20+camWidth,20,camWidth,camHeight);
 //    ofTranslate(ofPoint(0,0,-1500));
@@ -101,26 +95,28 @@ void testApp::draw(){
         int colorIndex = i % 3;
         switch (colorIndex) {
             case 0:
-                ofSetColor(255,0,0,255);
+                ofSetColor(255,0,0,200);
                 break;
             case 1:
-                ofSetColor(0,255,0,255);
+                ofSetColor(0,255,0,200);
                 break;
             case 2:
-                ofSetColor(0,0,255,255);
+                ofSetColor(0,0,255,200);
                 break;
             default:
                 break;
         }
-//        mMesh[i].draw();
-        glEnable(GL_LINE_SMOOTH);
-        glLineWidth(.125);
-//ofGetCurrentRenderer()->draw
-                ofGetCurrentRenderer()->draw(mMesh[i], OF_MESH_WIREFRAME);
-         glGetFloatv(GL_LINE_WIDTH,range);
-         glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE,range);
-//        mMesh[i].draw(OF_MESH_WIREFRAME);
+        mMesh[i].draw();
     }
+    
+    // in draw:
+    char fpsStr[255]; // an array of chars
+    sprintf(fpsStr, "frame rate: %.2f", ofGetFrameRate());
+    ofSetColor(0,0,0,0);
+    ofDrawBitmapString(fpsStr, 40,50);
+    ofSetColor(255,255,255,255);
+    ofDrawBitmapString(fpsStr, 45,55);
+
 }
 
 

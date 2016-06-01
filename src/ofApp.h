@@ -2,8 +2,8 @@
 
 #include "ofMain.h"
 
-#define LINE_COUNT 300
-#define SEG_COUNT 900
+#define LINE_COUNT 500
+#define SEG_COUNT 500
 class testApp : public ofBaseApp{
     
 public:
@@ -28,5 +28,6 @@ public:
     int 				camWidth;
     int 				camHeight;
     ofVboMesh mMesh[LINE_COUNT];
-    
+    int sketchWidth;
+    int sketchHeight;
 };
