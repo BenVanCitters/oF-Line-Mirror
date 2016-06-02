@@ -42,6 +42,8 @@ void testApp::setup(){
 
     sketchWidth = ofGetWidth();
     sketchHeight= ofGetHeight();
+    
+    ofHideCursor();
 }
 
 
@@ -110,12 +112,12 @@ void testApp::draw(){
     }
     
     // in draw:
-    char fpsStr[255]; // an array of chars
-    sprintf(fpsStr, "frame rate: %.2f", ofGetFrameRate());
-    ofSetColor(0,0,0,0);
-    ofDrawBitmapString(fpsStr, 40,50);
-    ofSetColor(255,255,255,255);
-    ofDrawBitmapString(fpsStr, 45,55);
+//    char fpsStr[255]; // an array of chars
+//    sprintf(fpsStr, "frame rate: %.2f", ofGetFrameRate());
+//    ofSetColor(0,0,0,0);
+//    ofDrawBitmapString(fpsStr, 40,50);
+//    ofSetColor(255,255,255,255);
+//    ofDrawBitmapString(fpsStr, 45,55);
 
 }
 
